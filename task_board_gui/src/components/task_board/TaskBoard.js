@@ -42,6 +42,7 @@ const TaskBoard = () => {
 
     const sendRequest = async (request_type, task) => {
         try {
+            const members_ids = task.members_ids.split(',').map(memberId => parseInt(memberId.trim(), 10));
             const response = await fetch(facade_endpoint, {
                 method: request_type,
                 headers: {
@@ -51,7 +52,7 @@ const TaskBoard = () => {
                     _id: task._id,
                     title: task.title,
                     description: task.description,
-                    members_ids: task.members_ids,
+                    members_ids: members_ids,
                     due_date: task.due_date,
                 }),
             });

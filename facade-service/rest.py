@@ -4,6 +4,7 @@ import requests
 
 login_service_url = 'http://localhost:8081'
 boards_service_url = 'http://localhost:8082'
+taskboard_service_url = 'http://localhost:8083'
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -43,6 +44,18 @@ def create_board():
         members.append(session['user'])
         json_data["members"] = members
         response = requests.post(f'{boards_service_url}/create', json=json_data)
+        return response.content, response.status_code, response.headers.items()
+
+    response = jsonify({'message': 'Unauthorized'})
+    response.status_code = 401
+    return response
+
+@app.route('/taskboard', methods=['GET', 'DELETE', 'POST', 'PATCH'])
+def get_taskboard():
+    if 'user' in session:
+        user = request.args.get('user')
+        url = f'{taskboard_service_url}/taskboard?user={user}'
+        response = requests.request(request.method, url, headers=request.headers, data=request.get_data())
         return response.content, response.status_code, response.headers.items()
 
     response = jsonify({'message': 'Unauthorized'})
